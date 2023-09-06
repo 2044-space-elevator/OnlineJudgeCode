@@ -15,11 +15,14 @@ int main() {
         cin >> arr[i];
     }
     rep(i) rep(j) rep(k) {
-        dict[(arr[i] + arr[j]) * arr[k]]++;
+        dict[arr[i] + arr[j] * arr[k]]++;
     }
     int ans = 0;
     rep(i) rep(j) rep(k) {
-        ans += dict[arr[i] * arr[j] + arr[k]];
+        if (!arr[i]) {
+            continue;
+        }
+        ans += dict[arr[i] * (arr[j] + arr[k])];
     }
     cout << ans;
 }

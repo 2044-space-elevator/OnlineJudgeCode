@@ -44,7 +44,6 @@ main() {
     int u, v, w;
     cin >> u >> v >> w;
     add(u, v, w);
-    add(v, u, w);
   }
   rep(i, 1, n) {
     fa[i] = i;

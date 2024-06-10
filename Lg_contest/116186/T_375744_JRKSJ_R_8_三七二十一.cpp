@@ -22,15 +22,19 @@ main() {
 //	int t; cin >> t; while (t--) solve();
   stg s;
   cin >> s;
+  int len = s.size();
   int cnt = 0;
-  for (int i = 0; i < s.size(); i++) {
-    if (s[i] == '2' || s[i] == '4' || s[i] == '8') {
+  for (int i = 0; i < len; i++) {
+    if (s[i] == '1' || s[i] == '2' || s[i] == '4' || s[i] == '8') {
       cnt++;
+      s[i] = '@';
     }
   }
-  for (int i = 0; i < s.size() - 1; i++) {
-    if (s[i] == '1' && s[i + 1] == '6') {
+  
+  for (int i = 0; i < len - 4; i++) {
+    if (s[i] == '6' && s[i + 1] == '5' && s[i + 2] == '5' && s[i + 3] == '3' && s[i + 4] == '6') {
       cnt++;
+      s[i + 4] = '@';
     }
   }
   cout << cnt;

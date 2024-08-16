@@ -26,16 +26,17 @@ struct Matrix {
   }
   Matrix operator*(const Matrix& b) const {
     Matrix rns;
-    rep(i, 1, 2) rep(j, 1, 2) rep(k, 1, 2) {
-      rns.m[i][j] += m[i][k] * b.m[k][j];
+    rep(i, 1, 2) { rep(j, 1, 2) { rep(k, 1, 2) {
+      rns.m[i][j] += m[i][k] % MOD * b.m[k][j] % MOD;
       rns.m[i][j] %= MOD;
-    }
+    } } }
     return rns;
   }
 }ans, base;
 
 void MatrixInit() {
   base.m[1][1] = base.m[1][2] = base.m[2][1] = 1;
+  base.m[2][2] = ans.m[2][1] = ans.m[2][2] = 0;
   ans.m[1][1] = ans.m[1][2] = 1;
 }
 
@@ -59,8 +60,8 @@ void NormalFibInit() {
 ll fastpow(ll a, ll b) {
   ll r = 1;
   while (b) {
-    if (b & 1) r *= a;
-    a *= a ;
+    if (b & 1) r *= a % MOD;
+    a = a * a % MOD;
     a %= MOD;
     r %= MOD;
     b >>= 1;
@@ -84,7 +85,7 @@ void solve() {
     qpow(n - 2);
     b = ans.m[1][1];
   } else b = 1;
-  cout << fastpow(a, b) << endl;
+  cout << fastpow(a, b) << '\n';
 
 }
 

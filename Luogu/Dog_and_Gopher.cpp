@@ -24,24 +24,22 @@ istream & operator>> (istream &in, Point &A) {
   in >> A.x >> A.y;
   return in;
 }
-Point pt[1005];
 int n;
 void solve() {
   Point dog, mouse;
-  // cin >> mouse >> dog;
-  cin >> mouse.x >> mouse.y >> dog.x >> dog.y;
+  cin >> mouse >> dog;
+  bool flg = 0;
   rep(i, 1, n) {
-    // cin >> pt[i];
-    cin >> pt[i].x >> pt[i].y;
-  }
-  rep(i, 1, n) {
-    if (mouse.dist(pt[i]) * 4.0 <= dog.dist(pt[i])) {
+    Point tmp;
+    cin >> tmp;
+    if (flg) continue;
+    if (mouse.dist(tmp) * 4.0 <= dog.dist(tmp)) {
       cout << "The gopher can escape through the hole at (";
-      cout << fixed << setprecision(3) << pt[i].x << "," << pt[i].y << ").\n";
-      return;
+      cout << fixed << setprecision(3) << tmp.x << "," << tmp.y << ").\n";
+      flg = 1;
     }
   } 
-  cout << "The gopher cannot escape.\n";
+  if (!flg) cout << "The gopher cannot escape.\n";
 }
 
 

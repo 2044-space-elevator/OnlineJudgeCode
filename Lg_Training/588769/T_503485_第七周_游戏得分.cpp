@@ -18,8 +18,16 @@ void solve() {
 	
 }
 
-
 main() {
 //	int t; cin >> t; while (t--) solve();
+int n; cin >> n;
+  int now = 0, maxx = INT_MIN;
+  rep(i, 1, n) {
+    int x;
+    cin >> x;
+    now = max(now + x, x);
+    maxx = max(now, maxx);
+  }
+  cout << maxx;
 	return 0;
 }

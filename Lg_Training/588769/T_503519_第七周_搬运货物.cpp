@@ -19,24 +19,18 @@ void solve() {
 }
 
 #define int ll
-
-int ST[500005][32], sum[500005];
-
-int query(int l, int r) {
-  int k = log2(r - l + 1);
-  return ST[l][k] | ST[r - (1 << k) + 1][k];
-}
+int dp[(int)1e6 + 5][2], arr[(int)1e6 + 5];
 
 main() {
 //	int t; cin >> t; while (t--) solve();
   int n;
   cin >> n;
-  rep(i, 1, n) {
-    cin >> ST[i][0];
+  rep(i, 1, n) cin >> arr[i];
+  dp[1][1] = arr[1];
+  rep(i, 2, n) {
+    dp[i][0] = min(dp[i - 1][1], dp[i - 2][1]);
+    dp[i][1] = min(dp[i - 1][0], dp[i - 1][1]) + arr[i];
   }
-  for (int j = 1; (1 << j) <= n; j++) {
-    for (int i = 1; i <= n - (1 << (j - 1)) + 1; i++) {
-      ST[i][j] = ST[i][j - 1] | ST[i + (1 << (j - 1))][j - 1];
-    }
-  }
+  cout << min(dp[n][0], dp[n][1]) << endl;
+	return 0;
 }

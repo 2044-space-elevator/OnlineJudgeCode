@@ -18,39 +18,42 @@ void solve() {
 	
 }
 
-struct Edge {
-    int u, v, c;
-}E[8005];
+const int N = 305, M = 8e3 + 5;
 
-bool cmp(Edge a, Edge b) { return a.c < b.c; }
-int n, m;
-int fa[8005];
+int n, m, fa[N];
+struct node {
+  int u, v, w;
+};
+
+vct<node> E;
+
+bool cmp(node a, node b) { return a.w < b.w; }
 
 int find(int x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
 
 main() {
 //	int t; cin >> t; while (t--) solve();
-    cin >> n >> m;
-    rep(i, 1, m) {
-        cin >> E[i].u >> E[i].v >> E[i].c;
-        fa[i] = i;
+  cin >> n >> m;
+  rep(i, 1, n) fa[i] = i;
+  int tmp = 0;
+  rep(i, 1, m) {
+    int u, v, w;
+    cin >> u >> v >> w;
+    tmp += w;
+    E.push_back({u, v, w});
+  }
+  sort(E.begin(), E.end(), cmp);
+  int cnt = 0, ans = 0;
+  while (cnt < n - 1) {
+    for (auto e : E) {
+      int u = find(e.u), v = find(e.v);
+      if (u != v) {
+        fa[u] = v;
+        ans = max(ans, e.w);
+        cnt++;
+      }
     }
-    int cnt = n - 1;
-    cout << cnt << ' ';
-    sort(E + 1, E + m + 1, cmp);
-    rep(i, 1, m) {
-        if (!cnt) {
-            break;
-        }
-        int nod1 = find(E[i].u), nod2 = find(E[i].v);
-        if (nod1 == nod2) {
-            continue;
-        }
-        fa[nod1] = nod2;
-        cnt--;
-        if (cnt == 0) {
-            cout << E[i].c;
-        }
-    }
+  }
+  cout << n - 1 << ' ' << ans; 
 	return 0;
 }

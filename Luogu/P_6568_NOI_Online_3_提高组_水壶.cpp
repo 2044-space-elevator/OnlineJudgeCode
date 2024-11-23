@@ -15,25 +15,20 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 void solve() {
-  
+	
 }
 
-#define int ll
-const int N = 1e5 + 7;
-ll dp[N], arr[N], n, m, k;
-
+ll n, k, arr[(int)1e6 + 5];;
 
 main() {
-  //  int t; cin >> t; while (t--) solve();
-  cin >> n >> m >> k;
-  rep(i, 1, n) cin >> arr[i];
-  memset(dp, 127, sizeof(dp));
-  dp[0] = 0;
+//	int t; cin >> t; while (t--) solve();
+  cin >> n >> k;
+  rep(i, 1, n) { cin >> arr[i]; arr[i] += arr[i - 1]; }
+  ll res = 0; 
   rep(i, 1, n) {
-    rep(j, 1, i) {
-      dp[i] = min(dp[i], dp[j - 1] + (j + i) * (i - j + 1) + abs(arr[i] - arr[j]) + k);
-    }
+    if (i + k > n) break;
+    res = max(res, arr[i + k] - arr[i - 1]);
   }
-  cout << dp[n];
-  return 0;
+  cout << res;
+	return 0;
 }

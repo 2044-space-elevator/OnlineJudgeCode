@@ -19,35 +19,51 @@ void solve() {
 }
 const int N = 5E5 + 5;
 
-int c[N], n, t;
-int arr[N];
-int lowbit(int x) { return x & -x; }
-void update(int x, int val) {
-  for (int i = x; i <= n; i += lowbit(i)) c[i] += val;
+int arr[4 * N];
+struct SegmentTree {
+  int l, r, dat;
+}t[4 * N];
+
+void build(int p, int l, int r) {
+  t[p].l = l; t[p].r = r;
+  if (l == r) {
+    t[p].dat = arr[l];
+    return;
+  }
+  int mid = (l + r) / 2;
+  build(p * 2, l, mid);
+  build(p * 2 + 1, mid + 1, r);
+  t[p].dat = t[p * 2].dat + t[p * 2 + 1].dat;
 }
 
-int query(int x) {
-  int ans = 0;
-  for (int i = x; i; i -= lowbit(i)) ans += c[i];
+void change(int p, int x, int v) {
+  if (t[p].l == t[p].r) {
+    t[p].dat += v;
+    return;
+  }
+  int mid = (t[p].l + t[p].r) / 2;
+  if (x <= mid) change(p * 2, x, v);
+  else change(p * 2 + 1, x, v);
+  t[p].dat = t[p * 2].dat + t[p * 2 + 1].dat;
+}
+
+int query(int p, int l, int r) {
+  if (l <= t[p].l && t[p].r <= r) return t[p].dat;
+  int mid = (t[p].l + t[p].r) / 2, ans = 0;
+  if (mid >= l) ans += query(p * 2, l, r);
+  if (mid < r) ans += query(p * 2 + 1, l, r);
   return ans;
 }
 
 main() {
 //	int t; cin >> t; while (t--) solve();
-cin >> n >> t;
-  rep(i, 1, n) { cin >> arr[i]; update(i, arr[i]); }
-  while (t--) {
-    int typ;
-    cin >> typ;
-    if (typ == 2) {
-      int l, r;
-      cin >> l >> r;
-      cout << query(r) - query(l - 1) << endl;
-    } else {
-      int x, y;
-      cin >> x >> y;
-      update(x, y);
-    }
+  int n, m; cin >> n >> m;
+  rep(i, 1, n) { cin >> arr[i]; }
+  build(1, 1, n);
+  while (m--) {
+    int op, l, r; cin >> op >> l >> r;
+    if (op == 1) change(1, l, r);
+    else cout << query(1, l, r) << endl;
   }
 	return 0;
 }

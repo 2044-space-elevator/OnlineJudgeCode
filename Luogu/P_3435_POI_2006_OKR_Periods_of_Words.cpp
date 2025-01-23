@@ -33,15 +33,12 @@ main() {
     if (b[i] == b[j + 1]) j++;
     pi[i] = j;
   }
-  int i = 1;
-  j = 0;
-  while (i <= n) {
-    while (j > 0 && a[i] != b[j + 1]) j = pi[j];
-    if (a[i] == b[j + 1]) j++;
-    if (j == m) { cout << i - j + 1 << endl; j = pi[j]; }
-    i++;
+  ll sum = 0;
+  rep(i, 2, m) {
+    int j = i;
+    while (pi[j]) j = pi[j];
+    sum += i - j;
   }
-  if (j == m) { cout << i - m << endl; }
-  rep(i, 1, m) cout << pi[i] << " ";
+  cout << sum;
 	return 0;
 }

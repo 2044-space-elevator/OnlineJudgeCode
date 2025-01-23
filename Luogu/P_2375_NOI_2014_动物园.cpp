@@ -14,34 +14,28 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
+int pi[(int)1e6 + 5];
 void solve() {
-	
-}
-
-stg a, b;
-const int N = 1e6 + 5;
-int pi[N];
-
-main() {
-//	int t; cin >> t; while (t--) solve();
-  cin >> a >> b;
-  a = " " + a; b = " " + b;
-  int n = a.size() - 1, m = b.size() - 1;
+	stg b; cin >> b;b = ' ' + b;
+  int m = b.size() - 1;
   int j = 0;
   rep(i, 2, m) {
     while (j > 0 && b[i] != b[j + 1]) j = pi[j];
     if (b[i] == b[j + 1]) j++;
     pi[i] = j;
   }
-  int i = 1;
-  j = 0;
-  while (i <= n) {
-    while (j > 0 && a[i] != b[j + 1]) j = pi[j];
-    if (a[i] == b[j + 1]) j++;
-    if (j == m) { cout << i - j + 1 << endl; j = pi[j]; }
-    i++;
+  ll sum = 1;
+  rep(i, 2, m) {
+    int tmp = (!!pi[i] + pi[min(i / 2, pi[i])]) + 1;
+    //cout << tmp << " ";
+    //tmp %= (int)1e9 + 7;
+    sum *= tmp;
+    sum %= (int)1e9 + 7;
   }
-  if (j == m) { cout << i - m << endl; }
-  rep(i, 1, m) cout << pi[i] << " ";
-	return 0;
+  cout << sum << endl;
+}
+
+
+main() {
+int t; cin >> t; while (t--) solve();
 }

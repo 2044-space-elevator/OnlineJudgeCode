@@ -18,8 +18,34 @@ void solve() {
 	
 }
 
+int n, k;
+int bit;
+bool vis[1048580];
+int pre[26];
+void dfs(int dep) {
+  if (dep == n + 1) {
+    rep(i, 1, n) {
+      cout <<  pre[i] << ' ';
+    }
+    exit(0);
+  }
+  repq(i, 0, n) {
+    // 1110
+    // 1110
+    if (!vis[i] && __builtin_popcount(i ^ pre[dep - 1]) == k) {
+      vis[i] = 1;
+      pre[dep] = i;
+      dfs(dep + 1);
+      vis[i] = 0;
+    }
+  }
+}
 
 main() {
 //	int t; cin >> t; while (t--) solve();
+  cin >> bit >> k;
+  n = 1 << bit; 
+  vis[0] = 1;
+  dfs(2);
 	return 0;
 }

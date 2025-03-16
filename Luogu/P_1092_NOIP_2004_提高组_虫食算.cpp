@@ -18,8 +18,34 @@ void solve() {
 	
 }
 
+bool correct() {
+  if ()
+}
+
+int n;
+stg a, b, c;
+bool used[105];
+int order[105];
+int num[105];
+int tot;
+
+void dfs(int x) {
+  if (x == n) {
+    if (correct()) {
+      rep(i, 'A', 'A' + n - 1) {
+        cout << order[i] << " ";
+      }
+      exit(0);
+    }
+    return;
+  }
+}
 
 main() {
 //	int t; cin >> t; while (t--) solve();
+cin >> n;
+  cin >> a >> b >> c;
+  dfs(1);
+
 	return 0;
 }

@@ -18,8 +18,26 @@ void solve() {
 	
 }
 
+int n;
+int arr[105], ans[105];
+bool vis[105];
 
 main() {
 //	int t; cin >> t; while (t--) solve();
+  cin >> n;
+  int cnt = 0;
+  bool flg = 0;
+  rep(i, 1, n) {
+    int x;
+    cin >> x;
+    cin >> arr[x];
+  }
+  int cnt = 0;
+  int i = 1;
+  while (1) {
+    while (arr[i]) {
+       
+    } 
+  } 
 	return 0;
 }

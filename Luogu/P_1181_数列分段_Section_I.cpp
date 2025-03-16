@@ -18,8 +18,22 @@ void solve() {
 	
 }
 
+int n, m;
+
 
 main() {
 //	int t; cin >> t; while (t--) solve();
+  cin >> n >> m;
+  int sum = 0, cnt = 0;
+  rep(i, 1, n) {
+    int x;
+    cin >> x;
+    if (cnt + x > m) {
+      sum++;
+      cnt = 0;
+    }  
+    cnt += x;
+  }
+  cout << sum + 1;
 	return 0;
 }

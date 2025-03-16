@@ -18,8 +18,24 @@ void solve() {
 	
 }
 
+#define int ll
+pair<int, int> arr[100005];
 
 main() {
 //	int t; cin >> t; while (t--) solve();
+  int n;
+  cin >> n;
+  int a, b;
+  cin >> a >> b;
+  rep(i, 1, n) cin >> arr[i].first >> arr[i].second;
+
+
+  
+  int ans = 0;
+  rep(i, 1, n) {
+    ans = max(ans, a / arr[i].second);
+    a *= arr[i].first;
+  }
+  cout << ans;
 	return 0;
 }

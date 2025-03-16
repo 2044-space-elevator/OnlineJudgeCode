@@ -18,8 +18,27 @@ void solve() {
 	
 }
 
+stg str;
+ull mod = 1 << 31;
+ull has(stg s) {
+  ll ans = 0;
+  for (char c : s) {
+    ans = (114 * ans + c) % mod;
+  }
+  return ans;
+}
+ull rs[10005];
 
 main() {
 //	int t; cin >> t; while (t--) solve();
+  int n;
+  cin >> n;
+  int cnt = 0;
+  rep(i, 1, n) {
+    cin >> str;
+    rs[++cnt] = has(str);
+  }
+  sort(rs, rs + cnt + 1);
+  cout << unique(rs, rs + cnt + 1) - rs - 1;
 	return 0;
 }

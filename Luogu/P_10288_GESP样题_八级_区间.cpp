@@ -14,31 +14,35 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
-int n;
-map<int, vct<int>> mp;
-bool flg = 0;
+vct<int> na[(int)1e5 + 5];
+int arr[(int)1e5 + 5], brr[(int)1e5 + 5];
 void solve() {
-  cin >> n;
-  mp.clear();
-  rep(i, 1, n) {
-    int x;
-    cin >> x;
-    mp[x].push_back(i);
-  }
-  int q;
-  cin >> q;
-  while (q--) {
-    int l, r, x;
-    cin >> l >> r >> x;
-    vector<int>::iterator left = lower_bound(mp[x].begin(), mp[x].end(), l);
-    vector<int>::iterator right = (upper_bound(mp[x].begin(), mp[x].end(), r) - 1);
-    cout << right - left + 1 << endl; 
-  }
+    int n;
+    cin >> n; 
+    rep(i, 1, n) {cin >> arr[i]; brr[i] = arr[i]; }
+    sort(brr + 1, brr + n + 1);
+    int k = unique(brr + 1, brr + n + 1) - (brr + 1);
+    rep(i, 1, n) na[i].clear();
+    rep(i, 1, n) {
+        arr[i] = lower_bound(brr + 1, brr + k + 1, arr[i]) - brr;
+        na[arr[i]].push_back(i);
+    }   
+    int t;
+    cin >> t;
+    while (t--) {
+        int l, r, x;
+        cin >> l >> r >> x;
+        int ox = x;
+        x = lower_bound(brr + 1, brr + k + 1, x) - brr;
+        if (brr[x] != ox) { cout << 0 << endl; continue; }
+        auto ll = lower_bound(na[x].begin(), na[x].end(), l);
+        auto rr = --(upper_bound(na[x].begin(), na[x].end(), r));
+        cout << rr - ll + 1 << endl;
+    }
 }
 
 
 main() {
 	int t; cin >> t; while (t--) solve();
-  if (flg == 1) return 1;
 	return 0;
 }

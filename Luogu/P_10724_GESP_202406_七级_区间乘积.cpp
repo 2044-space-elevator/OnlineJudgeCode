@@ -18,28 +18,31 @@ void solve() {
 	
 }
 
+int cnt[(int)1e5 + 5], prime[10] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}, n, fy[31], rec[1 << 10], arr[(int)1e5 + 5];
 
-const int N = 4E4 + 4;
-int pri[N], phi[N];
-bool vis[N];
-int cnt;
 main() {
 //	int t; cin >> t; while (t--) solve();
-    repq(i, 2, N) phi[i] =i;
-    repq(i, 2, N) {
-        if (phi[i] == i) {
-            rep(j, 1, N / i) {
-                phi[i * j] = phi[i * j] / i * (i - 1);
+    repq(i, 0, 10) {
+        fy[prime[i]] = i;
+    }
+    cin >> n;
+    rep(i, 1, 30) {
+        int tmp = i;
+        repq(p, 0, 10 ){
+            while (tmp % prime[p] == 0) {
+                cnt[i] ^= 1 << p;
+                tmp /= prime[p];
+                
             }
         }
     }
-    int n;
-     cin>> n;
-     if (n == 1) { cout << 0; return 0; } 
-    int ans = 0;
-    repq(i, 2 ,n) {
-        ans += phi[i];
-    }
-    cout << 3 + 2 * ans;
+    ll re = 0, px = 0;
+    rec[0] = 1;
+    rep(i, 1, n ){
+        cin >> arr[i];
+        px ^= cnt[arr[i]];
+        re += rec[px]++;
+    } 
+    cout << re;
 	return 0;
 }

@@ -14,32 +14,33 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
+int dp[5005];
+int k;
+const int mod = 998244353;
+
+
 void solve() {
-	
+    char op;
+    int num;
+    cin >> op >> num;
+    if (op == '+') {
+        rrep(i, num, k) {
+            dp[i] += dp[i - num];
+            dp[i] %= mod;
+        } 
+    } else {
+        rep(i, num, k) {
+            dp[i] -= dp[i - num];
+            dp[i] += mod;
+            dp[i] %= mod;
+        }
+    }
+    cout << dp[k] << endl;
 }
 
 
-const int N = 4E4 + 4;
-int pri[N], phi[N];
-bool vis[N];
-int cnt;
 main() {
-//	int t; cin >> t; while (t--) solve();
-    repq(i, 2, N) phi[i] =i;
-    repq(i, 2, N) {
-        if (phi[i] == i) {
-            rep(j, 1, N / i) {
-                phi[i * j] = phi[i * j] / i * (i - 1);
-            }
-        }
-    }
-    int n;
-     cin>> n;
-     if (n == 1) { cout << 0; return 0; } 
-    int ans = 0;
-    repq(i, 2 ,n) {
-        ans += phi[i];
-    }
-    cout << 3 + 2 * ans;
+    dp[0] = 1;
+	int t; cin >> t >> k; while (t--) solve();
 	return 0;
 }

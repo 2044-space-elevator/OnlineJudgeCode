@@ -18,6 +18,7 @@ void solve() {
 	
 }
 
+const int N = 
 
 main() {
 //	int t; cin >> t; while (t--) solve();

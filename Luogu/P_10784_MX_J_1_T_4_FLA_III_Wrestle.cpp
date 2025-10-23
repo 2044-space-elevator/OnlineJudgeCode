@@ -24,9 +24,13 @@ struct RedSegment {
 	ll w;
 }reds[N];
 
-ll reds_pref[N], reds_len[N];
+struct BlueSegment {
+	int l, r;
+	ll v, w;
+}blues[N];
+
+ll reds_pref[N], reds_len[N], dp[5005][5005], cnt, dp_pre[5005][5005], blue_l[5005];
 ll cover[N];
-ll v[N], w[N];
 
 bool cmp(RedSegment a, RedSegment b) {
 	return a.l < b.l;
@@ -34,6 +38,10 @@ bool cmp(RedSegment a, RedSegment b) {
 
 bool check(int red, pair<int, int> blue) {
 	return max(blue.first, reds[red].l) <= min(blue.second, reds[red].r);
+}
+
+bool cmp2(BlueSegment a, BlueSegment b) {
+	return a.l < b.l;
 }
 
 main() {
@@ -45,9 +53,10 @@ main() {
 	sort(reds + 1, reds + n + 1, cmp);
 	rep(i, 1, n) {
 		reds_pref[i] = reds_pref[i - 1] + reds[i].w;
+		// 权值的前缀和
 		reds_len[i] = reds_len[i - 1] + reds[i].r - reds[i].l + 1;
+		// 收益的前缀和
 	}
-	// cout << check(1, {18, 19});
 	rep(i, 1, m) {
 		int lef, rig;
 		cin >> lef >> rig;
@@ -64,6 +73,7 @@ main() {
 		if (!check(left_red, {lef, rig})) {
 			left_red++;
 		}
+		// 二分 si
 		int right_red = 1; l = left_red, r = n;
 		while (l < r) {
 			int mid = (l + r) / 2;
@@ -75,22 +85,45 @@ main() {
 		right_red = min(n, r);
 		if (!check(right_red, {lef, rig}))
 			right_red--;
+		// 二分 ti
+		ll v = 0, w = 0;
+		// 计算收益与代价
 		if (right_red - left_red >= 0) {
-			w[i] = reds_pref[right_red] - reds_pref[left_red - 1];
+			w = reds_pref[right_red] - reds_pref[left_red - 1];
+			// 代价易得
 			int tmpl = left_red, tmpr = right_red;
 			if (reds[left_red].l < lef) {
-				v[i] = reds[left_red].r - lef + 1;
+				v = min(rig, reds[left_red].r) - max(reds[left_red].l, lef) + 1;
 				tmpl++;
 			}
-			if (reds[right_red].r > rig) {
-				v[i] = rig - reds[right_red].l + 1;
+			if (tmpr >= tmpl && reds[right_red].r > rig) {
+				v += min(rig, reds[right_red].r) - max(lef, reds[right_red].l) + 1;
 				tmpr--;
 			}
-			if (right_red - left_red >= 0)	
-				v[i] += reds_len[tmpr] - reds_len[tmpl - 1];
+			// 收益需要处理边际
+			if (tmpr - tmpl >= 0)	
+				v += reds_len[tmpr] - reds_len[tmpl - 1];
+			blues[++cnt] = {left_red, right_red, v, w};
 		}
-
-		cout << left_red << ' ' << right_red << ' ' << v[i] << ' ' << w[i] << endl;
 	}
+	sort(blues + 1, blues + cnt + 1, cmp2);
+	rep(i, 1, cnt) {
+		blue_l[i] = blues[i].l;
+		// 因为我二分很烂 qwq，单开一个数组可以用 upper_bound（
+	}
+	ll ans = 0;
+	rep(i, 1, cnt) {
+		int ending = upper_bound(blue_l + 1, blue_l + cnt + 1, blues[i].r) - blue_l;
+		rep(j, 0, k) {
+			dp_pre[i][j] = max(dp_pre[i - 1][j], dp_pre[i][j]);
+			if (j < blues[i].w) continue;
+			dp[i][j] = dp_pre[i][j - blues[i].w] + blues[i].v;
+			dp_pre[ending][j] = max(dp_pre[ending][j], dp[i][j]);
+			ans = max(ans, dp[i][j]);
+			// dp_pre 为 F 数组
+			// 动规优化
+		}
+	}
+	cout << ans;
 	return 0;
 }

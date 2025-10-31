@@ -11,40 +11,64 @@
 #define vct vector
 using namespace std;
 
+typedef long long ll;
 typedef unsigned long long ull;
 
 void solve() {
 	
 }
 
-int arr[20][10], brr[10][10][10][10][10];
+int status[10][7];
+int tmp[7];
+
+bool check(int x) {
+	rep(i, 1, 5) {
+		if ((tmp[i] + 20) % 10 != (20 + status[x][i]) % 10) {
+			return 0;
+		}
+	}
+	return 1;
+}
 
 main() {
+	int n;
+	cin >> n;
+	rep(i, 1, n) {
+		rep(j ,1, 5) {
+			cin >> status[i][j];
+		}
+	}
+	int cnt = 0;
+	rep(a, 0, 9) {
+	rep(b, 0, 9) {
+	rep(c, 0, 9) {
+	rep(d, 0, 9) {
+	rep(e, 0, 9) {
+		bool ans = 1;
+		rep(i, 1, n) {
+			bool flg = 0;
+			tmp[1] = a, tmp[2] = b, tmp[3] = c, tmp[4] = d, tmp[5] = e;
+			rep(j, 1, 5) {
+				rep(k, -9, 9) {
+					if (k == 0) continue;
+					tmp[j] += k;
+					flg |= check(i);
+					tmp[j] -= k;
+				}
+			}
+			rep(j, 1, 4) {
+				rep(k, -9, 9) {
+					if (k == 0) continue;
+					tmp[j] += k, tmp[j + 1] += k;
+					flg |= check(i);
+					tmp[j] -= k, tmp[j + 1] -= k;
+				}
+			}
+			ans &= flg;
+		}
+		cnt += ans;
+	}}}}}
+	cout << cnt;
 //	int t; cin >> t; while (t--) solve();
-  int n;
-  cin >> n;
-  rep(i, 1, n) {
-    int a, b, c, d, e;
-    cin >> a >> b >> c >> d >> e;
-    brr[a][b][c][d][e]++;
-    rep(j, 0, 9) {
-      brr[j][b][c][d][e]++;
-      brr[a][j][c][d][e]++;
-      brr[a][b][j][d][e]++;
-      brr[a][b][c][j][e]++;
-      brr[a][b][c][d][j]++;
-    }
-    rep(j, 1, 9) {
-      brr[(a + j) % 10][(b + j) % 10][c][d][e]++;
-      brr[a][(b + j) % 10][(c + j) % 10][d][e]++;
-      brr[a][b][(c + j) % 10][(d + j) % 10][e]++;
-      brr[a][b][c][(d + j) % 10][(e + j) % 10]++;
-
-    }
-  }
-  int ans = 0;
-  rep(i, 0, 9) rep(j, 0, 9) rep(k, 0, 9) rep(l, 0, 9) rep(m, 0, 9)
-    ans += brr[i][j][k][l][m] == n;
-  cout << ans;
 	return 0;
 }

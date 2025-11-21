@@ -18,60 +18,57 @@ void solve() {
 	
 }
 
-const int N = 5E3 + 5;
-struct edge {
-	int v, w;
-};
-
-vct<edge> E[N];
-
-ll dis[N], cnt[N], n;
-bool vis[N];
+ll n, m, dis[5005], cnt[5005];
+vct<pair<int, int> > E[5005];
+bool vis[5005];
 queue<int> q;
 
 bool spfa(int s) {
-	memset(dis, 127, sizeof dis);
+	memset(dis, 63, sizeof dis);
 	dis[s] = 0;
 	vis[s] = 1;
 	q.push(s);
 	while (q.size()) {
 		int u = q.front();
-		q.pop();
 		vis[u] = 0;
-		for (auto tmp : E[u]) {
-			int v = tmp.v, w = tmp.w;
-			if(dis[v] > dis[u] + w) {
+		q.pop();
+		for (auto tmp: E[u]) {
+			int v = tmp.first, w = tmp.second;
+			if (dis[v] > dis[u] + w) {
 				dis[v] = dis[u] + w;
 				cnt[v] = cnt[u] + 1;
 				if (cnt[v] > n) {
 					return 0;
 				}
-				if (!vis[v]) {
-					q.push(v);
-					vis[v] = 1;
-				}
-			}
+				if (!vis[v]) vis[v] = 1, q.push(v);
+			}	
 		}
 	}
 	return 1;
 }
 
 main() {
-//	int t; cin >> t; while (t--) solve();
-	int m;
 	cin >> n >> m;
 	rep(i, 1, m) {
-		int u, v, w;
-		cin >> u >> v >> w;
-		E[v].push_back({u, w});
+		int typ, a, b, c;
+		cin >> typ >> a >> b;
+		if (typ == 1) {
+			int c;
+			cin >> c;
+			E[a].push_back({b, -c});
+		} if (typ == 2) {
+			int c;
+			cin >> c;
+			E[b].push_back({a, c});
+		} if (typ == 3) {
+			E[a].push_back({b, 0});
+			E[b].push_back({a, 0});
+		}
 	}
-	rep(i, 1, n) {
-		E[0].push_back({i, 0});
-	}
+	rep(i ,1, n) E[0].push_back({i, 0});
 	if (!spfa(0)) {
-		cout << "NO";
-	} else {
-		rep(i, 1, n) cout << dis[i] << ' ';
-	}
+		rtn
+	} else rty
+//	int t; cin >> t; while (t--) solve();
 	return 0;
 }

@@ -19,69 +19,60 @@ void solve() {
 }
 
 const int N = 2E5 + 5;
-struct ZXTree {
-	int l, r, val;
-}tree[N * 64];
 
-int pos[N], len, cnt, root[N], arr[N], n, m;
+struct SegmentTree {
+	int lc, rc, val;
+}tr[N << 6];
 
-int getpos(int val) {
-	return lower_bound(pos + 1, pos + len + 1, val) - pos;
-}
-
+int tot;
 int build(int l, int r) {
-	int rt = ++cnt;
-	tree[rt].val = 0;
+	int rt = ++tot;
 	if (l == r) return rt;
 	int mid = (l + r) / 2;
-	tree[rt].l = build(l, mid);
-	tree[rt].r = build(mid + 1, r);
-	return rt;
+	tr[rt].lc = build(l, mid);
+	tr[rt].rc = build(mid + 1, r);
+	return rt;	
 }
 
-int update(int l, int r, int x, int rt) {
-	int cur = ++cnt;
-	tree[cur] = tree[rt];
-	tree[cur].val++;
-	if (l == r) return cur;
-	int mid = (l + r) / 2;
-	if (x <= mid) {
-		tree[cur].l = update(l, mid, x, tree[cur].l);
-	} else {
-		tree[cur].r = update(mid + 1, r, x, tree[cur].r);
+int update(int rt, int pl, int pr, int k) {
+	int cur = ++tot;
+	tr[cur] = tr[rt];
+	tr[cur].val = tr[rt].val + 1;
+	if (pl == pr) {
+		return cur;
 	}
+	int mid = (pl + pr) / 2;
+	if (k <= mid) tr[cur].lc = update(tr[cur].lc, pl, mid, k);
+	if (k > mid) tr[cur].rc = update(tr[cur].rc, mid + 1, pr, k);
 	return cur;
 }
 
-int query(int l, int r, int L, int R, int val) {
-	int mid = (L + R) / 2;
-	int check = tree[tree[r].l].val - tree[tree[l].l].val;
-	if (L == R) return L;
-	if (val <= check) {
-		return query(tree[l].l, tree[r].l, L, mid, val);
-	} else return query(tree[l].r, tree[r].r, mid + 1, R, val - check);
+int query(int u, int v, int l, int r, int val) {
+	if (l == r) return l;
+	int mid = (l + r) / 2;
+	int sum = tr[tr[v].lc].val - tr[tr[u].lc].val;
+	if (val <= sum) {
+		return query(tr[u].lc, tr[v].lc, l, mid, val);
+	}	 else return query(tr[u].rc, tr[v].rc, mid + 1, r, val - sum);
+}
+int n, m, arr[N], cnt, lsh[N], rt[N];
+int find(int val) {
+	return lower_bound(lsh + 1, lsh + cnt + 1, val) - lsh;
 }
 
 main() {
+//	int t; cin >> t; while (t--) solve();
 	cin >> n >> m;
-	rep(i ,1, n) {
-		cin >> arr[i];
-		pos[i] = arr[i];
-	}
-	sort(pos + 1, pos + n + 1);
-	len = unique(pos + 1, pos + n + 1) - (pos + 1);
-	rep(i, 1, n) {
-		arr[i] = getpos(arr[i]); 
-	}
-	root[0] = build(1, len);
-	rep(i ,1, n) {
-		root[i] = update(1, len, arr[i], root[i - 1]);
-	}
+	rep(i ,1, n) cin >> arr[i];
+	rep(i, 1, n) lsh[i] = arr[i];
+	sort(lsh + 1, lsh + n + 1);
+	cnt = unique(lsh + 1, lsh + n + 1) - (lsh + 1);
+	rt[0] = build(1, cnt);
+	rep(i, 1, n) rt[i] = update(rt[i - 1], 1, cnt, find(arr[i]));
 	while (m--) {
 		int l, r, k;
 		cin >> l >> r >> k;
-		cout << pos[query(root[l - 1], root[r], 1, len, k)] << '\n';
+		cout << lsh[query(rt[l - 1], rt[r], 1, cnt, k)] << '\n';
 	}
-//	int t; cin >> t; while (t--) solve();
 	return 0;
 }

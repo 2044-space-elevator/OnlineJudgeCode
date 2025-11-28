@@ -18,46 +18,28 @@ void solve() {
 	
 }
 
-#define int ull
-int n;
-struct BinaryTree {
-  int l, r;
-}tree[(int)1e7 + 5];
-int fa[(int)1e7 + 5];
-int arr[(int)1e7 + 5];
-stack<int> st;
+const int N = 1E7 + 5;
+int ls[N], rs[N], st[N], top, lst, arr[N];
 
 main() {
+	ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+	int n;
+	cin >> n;
+	rep(i, 1, n) {
+		cin >> arr[i];
+		top = lst;
+		while (top && arr[st[top]] > arr[i]) top--;
+		if (top) rs[st[top]] = i;
+		if (top < lst) ls[i] = st[top + 1];
+		st[++top] = i;
+		lst = top;
+	}
+	ll ans1 = 0, ans2 = 0;
+	rep(i, 1, n) {
+		ans1 ^= (ll)(i) * (ls[i] + 1);
+		ans2 ^= (ll)(i) * (rs[i] + 1);
+	}
+	cout << ans1 << ' ' << ans2;
 //	int t; cin >> t; while (t--) solve();
-  ios::sync_with_stdio(false);
-  cin.tie(0);
-  cout.tie(0);
-  cin >> n;
-  rep(i, 1, n) {
-    int x;
-    cin >> x;
-    arr[i] = x;
-    if (st.size() && x > arr[st.top()]) {
-      if (tree[st.top()].r) tree[st.top()].l = i;
-      else tree[st.top()].r = i;
-      fa[i] = st.top();
-    }
-    while (st.size() && x < arr[st.top()]) {
-      tree[fa[st.top()]].r = i;
-      fa[i] = fa[st.top()];
-      tree[st.top()].r = tree[i].l;
-      fa[tree[i].l] = st.top();
-      tree[i].l = st.top();
-      fa[st.top()] = i;
-      st.pop();
-    }
-    st.push(i);
-  }
-  int ans1 = 0, ans2 = 0;
-  rep(i, 1, n) {
-    ans1 ^= i * (tree[i].l + 1);
-    ans2 ^= i * (tree[i].r + 1);
-  }
-  cout << ans1 << " " << ans2;
 	return 0;
 }

@@ -14,72 +14,81 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
-void solve() {
-	
-}
-
-const int N = 5005;
-
-struct segm {
+#define y1 y111
+ll ans = 0;
+const int N = 1e4 + 5;
+int x[N];
+int x1[N], y1[N], x2[N], y2[N], cnt;
+ll len[N << 4], tr[N << 4];
+int n;
+struct line {
 	int x1, x2, y, opt;
-	bool operator < (const segm &b) const {
-		if (y == b.y) 
+	bool operator < (const line& b) const {
+		if (y == b.y) {
 			return opt > b.opt;
+		}
 		return y < b.y;
 	}
-}seg[N * 2];
+}seg[N];
 
-int tr[N << 2], len[N << 2], cnt, x[N], n;
-
-int find(int v) {
-	return lower_bound(x + 1, x + cnt + 1, v) - x;
+int find(int val) {
+	return lower_bound(x + 1, x + cnt + 1, val) - x;
 }
 
 #define lc (2*p)
 #define rc (2*p+1)
-void pushUp(int pl, int pr, int p) {
+
+void pushUp(int p, int pl, int pr) {
 	if (tr[p]) len[p] = x[pr + 1] - x[pl];
 	else if (pl == pr) len[p] = 0;
 	else len[p] = len[lc] + len[rc];
 }
 
-void update(int pl, int pr, int p, int l, int r, int k) {
+void update(int p, int pl, int pr, int l, int r, int k) {
 	if (l <= pl && pr <= r) {
 		tr[p] += k;
-		pushUp(pl, pr, p);
+		pushUp(p, pl, pr);
 		return;
 	}
 	int mid = (pl + pr) / 2;
-	if (l <= mid) update(pl, mid, lc, l, r, k);	
-	if (r > mid) update(mid + 1, pr, rc, l, r, k);
-	pushUp(pl, pr, p);
+	if (l <= mid) update(lc, pl, mid, l, r, k);
+	if (r > mid) update(rc, mid + 1, pr, l, r, k);
+	pushUp(p, pl, pr);
 }
 
+void solve() {
+	memset(tr, 0, sizeof tr);
+	memset(len, 0, sizeof len);
+	sort(seg + 1, seg + 2 * n + 1);
+	sort(x + 1, x + 2 * n + 1);
+	cnt = unique(x + 1, x + 2 * n + 1) - (x + 1);
+	int last = 0;
+	rep(i, 1, 2 * n) {
+		update(1, 1, cnt - 1, find(seg[i].x1), find(seg[i].x2) - 1, seg[i].opt);
+		ans += abs(len[1] - last);
+		last = len[1];
+	}
+}
+
+
 main() {
-//	int t; cin >> t; while (t--) solve();
 	cin >> n;
 	rep(i, 1, n) {
-		int x1, y1, x2, y2;
-		cin >> x1 >> y1 >> x2 >> y2;
-		x1 += 10000, x2 += 10000, y1 += 10000, y2 += 10000;
-		seg[i] = {x1, x2, y1, 1};
-		seg[i + n] = {x1, x2, y2, -1};
-		x[++cnt] = x1, x[++cnt] = x2;
+		cin >> x1[i] >> y1[i] >> x2[i] >> y2[i];
 	}
-	sort(x + 1, x + cnt + 1);
-	cnt = unique(x + 1, x + cnt + 1) - (x + 1);
-	sort(seg + 1, seg + n * 2 + 1);
-	int ans = 0, last = 0;
-	for (int i = 1; i <= 2 * n; i++) {
-		update(1, cnt - 1, 1, find(seg[i].x1), find(seg[i].x2) - 1, seg[i].opt);
-		while (seg[i + 1].y == seg[i].y && seg[i + 1].opt == seg[i].opt) {
-			i++;
-			update(1, cnt - 1, 1, find(seg[i].x1), find(seg[i].x2) - 1, seg[i].opt);
-		}
-		ans += abs(last - len[1]);
-		last = len[1];
-		ans += tr[1] * 2 * (seg[i + 1].y - seg[i].y);
-	}	
-	cout << ans;
+	rep(i, 1, n) {
+		x[i] = x1[i]; x[i + n] = x2[i];
+		seg[i] = {x1[i], x2[i], y1[i], 1};
+		seg[i + n] = {x1[i], x2[i], y2[i], -1};
+	}
+	solve();
+	rep(i, 1, n) {
+		x[i] = y1[i]; x[i + n] = y2[i];
+		seg[i] = {y1[i], y2[i], x1[i], 1};
+		seg[i + n] = {y1[i], y2[i], x2[i], -1};
+	}
+	solve();
+	cout << ans << '\n';
+//	int t; cin >> t; while (t--) solve();
 	return 0;
 }

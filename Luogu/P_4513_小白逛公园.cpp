@@ -11,91 +11,79 @@
 #define vct vector
 using namespace std;
 
-typedef long long ll;
 typedef unsigned long long ull;
 
 void solve() {
 	
 }
 
-#define lc(x) ((x)*2)
-#define rc(x) (((x)*2)+1)
-
 const int N = 5E5 + 5;
-struct T {
-    int l, r, val, maxium, ls, rs;
-}tree[N * 4];
-int arr[N], n;
+int rl[N * 4], ll[N * 4], midval[N * 4], tr[N * 4];
 
-void pushUp(int ind) {
-    tree[ind].val = tree[lc(ind)].val + tree[rc(ind)].val;
-    tree[ind].ls = max(tree[lc(ind)].ls, tree[lc(ind)].val + tree[rc(ind)].ls);
-    tree[ind].rs = max(tree[rc(ind)].rs, tree[rc(ind)].val + tree[lc(ind)].rs);
-    tree[ind].maxium = max({
-        tree[rc(ind)].maxium,
-        tree[lc(ind)].maxium,
-        tree[lc(ind)].rs + tree[rc(ind)].ls
-    });
-}
+struct seg {
+	int rl, ll, midval, tr;
+};
 
-void build(int x, int l, int r) {
-    tree[x].l = l, tree[x].r = r;
-    if (l == r) {
-        tree[x].val = tree[x].maxium = tree[x].ls = tree[x].rs = arr[l];
-        return;
-    }
-    int mid = (l + r) / 2;
-    build(lc(x), l, mid);
-    build(rc(x), mid + 1, r);
-    pushUp(x);
-}
+int n, m;
+#define lc (2*p)
+#define rc (2*p+1)
 
-void update(int x, int pos, int val) {
-    if (tree[x].l == tree[x].r) {
-        tree[x].val = tree[x].maxium = tree[x].ls = tree[x].rs = val;
-        return;
-    }
-    int mid = (tree[x].l + tree[x].r) / 2; 
-    if (pos <= mid) update(lc(x), pos, val);
-    else  update(rc(x), pos, val);
-    pushUp(x);
+void pushUp(int p) {
+	rl[p] = max(rl[rc], tr[rc] + rl[lc]);
+	ll[p] = max(ll[lc], tr[lc] + ll[rc]);
+	midval[p] = max(midval[lc], max(midval[rc], rl[lc] + ll[rc]));
+	tr[p] = tr[lc] + tr[rc];
 }
 
 
-T query(int x, int l, int r) {
-    if (l <= tree[x].l && tree[x].r <= r) {
-        return tree[x];
-    }
-    int mid = (tree[x].l + tree[x].r) / 2;
-    if (r <= mid) return query(lc(x), l, r);
-    if (mid < l) return query(rc(x), l, r);
-    T fs = query(lc(x), l, r);
-    T sc = query(rc(x), l, r);
-    T res;
-    res.ls = max(fs.ls, fs.val + sc.ls);
-    res.rs = max(sc.rs, fs.rs + sc.val);
-    res.val = fs.val + sc.val;
-    res.maxium = max({fs.maxium, sc.maxium, fs.rs + sc.ls}); 
-    return res;
+void modify(int p, int pl, int pr, int x, int k) {
+	if (pl ==  pr) {
+		rl[p] = ll[p] = midval[p] = tr[p] = k;
+		return;
+	}
+	int mid = (pl + pr) / 2;
+	if (x <= mid) modify(lc, pl, mid, x, k);
+	else modify(rc, mid + 1, pr, x, k);
+	pushUp(p);
 }
 
+seg query(int p, int pl, int pr, int l, int r) {
+	if (l <= pl && pr <= r) {
+		return {rl[p], ll[p], midval[p], tr[p]};
+	}
+	int mid = (pl + pr) / 2;
+	seg ans = {-1005, -1005, -1005, -1005};
+	seg tmp = {-1005, -1005, -1005, -1005};
+	if (l <= mid) {
+		ans = tmp = query(lc, pl, mid, l, r);	
+	} if (r > mid) {
+		seg tmp2 = query(rc, mid + 1, pr, l, r);
+		ans.rl = max(tmp2.rl, tmp2.tr + tmp.rl);
+		ans.ll = max(tmp.ll, tmp.tr + tmp2.ll);
+		ans.midval = max(tmp.midval, max(tmp2.midval, tmp.rl + tmp2.ll));
+		ans.tr = tmp.tr + tmp2.tr;
+	}
+	pushUp(p);
+	return ans;
+}
 
-main() {
+signed main() {
+	cin >> n >> m;
+	rep(i, 1, n) {
+		int x, k;
+		cin >> k;
+		modify(1, 1, n, i, k);
+	}
+	while (m--) {
+		int op, x, y;
+		cin >> op >> x >> y;
+		if (op == 1) {
+			if (x > y) swap(x, y);
+			cout << query(1, 1, n, x, y).midval << '\n';
+		} else {
+			modify(1, 1, n, x, y);
+		}
+	}
 //	int t; cin >> t; while (t--) solve();
-    int q;
-    cin >> n >> q;
-    rep(i, 1, n) cin >> arr[i];
-    build(1, 1, n);
-    while (q--) {
-        int op, l, r;
-        cin >> op >> l >> r;
-        if (op == 1) {
-            if (r < l) swap(l, r);
-            T tmp = query(1, l, r);
-            cout << tmp.maxium << endl;
-        }
-        if (op == 2) update(1, l, r);
-    }
-    // cout << 114514;
 	return 0;
 }

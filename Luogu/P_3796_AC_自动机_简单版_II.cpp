@@ -14,81 +14,75 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
-const int N = 10505;
-int fail[N];
+stg s[155];
+stg t;
+int n, tr[10505][26], exist[10505], fail[10505];
 int cnt;
-int tr[N][27];
-pair<int, int> fa[N];
-int exist[N];
-stg s[155], t;
-int n;
 
 void insert(int ind) {
 	int p = 0;
-	repq(i, 0, s[ind].size()) {
-		int c = s[ind][i] - 'a';
-		if (!tr[p][c]) tr[p][c] = ++cnt;
-		fa[tr[p][c]] = {p, c};
-		p = tr[p][c];
+	for (char vt : s[ind]) {
+		char v = vt - 'a';
+		if (!tr[p][v]) tr[p][v] = ++cnt;
+		p = tr[p][v];
 	}
 	exist[p] = ind;
 }
 
-void make_fail() {
+void gfail() {
 	queue<int> q;
-	q.push(0);
+	repq(i, 0, 26) {
+		if (tr[0][i])
+			q.push(tr[0][i]);
+	}
 	while (q.size()) {
 		int u = q.front(); q.pop();
 		repq(i, 0, 26) {
 			if (tr[u][i]) {
-				q.push(tr[u][i]);
-				if (u == 0) continue;
 				fail[tr[u][i]] = tr[fail[u]][i];
+				q.push(tr[u][i]);
 			} else tr[u][i] = tr[fail[u]][i];
 		}
 	}
+	
 }
-
 int ans[155];
 
-
 void solve() {
-	if (!n) return ;
+	if (!n) return;
 	cnt = 0;
-	// cin >> n;
-	memset(fail, 0, sizeof fail);
+	memset(ans, 0, sizeof ans);
 	memset(tr, 0, sizeof tr);
 	memset(exist, 0, sizeof exist);
-	memset(ans, 0, sizeof ans);
+	memset(fail, 0, sizeof fail);
 	rep(i, 1, n) {
 		cin >> s[i];
 		insert(i);
-	}	
+	}
+	gfail();
 	cin >> t;
-	// cout << cnt << '\n';e
-	make_fail();
-	int now = 0;
-	repq(i, 0, t.size()) {
-		now = tr[now][t[i] - 'a'];
-		for (int t = now; t; t = fail[t]) {
+	int maxe = 0;
+	int p = 0;
+	for (char v : t) {
+		p = tr[p][v - 'a'];
+		for (int t = p; t; t = fail[t]) {
 			ans[exist[t]]++;
 		}
 	}
-	int maxe = 0;
-	rep(i ,1, n) {
+	rep(i, 1, n) {
 		maxe = max(maxe, ans[i]);
-	}
+	}	
 	cout << maxe << '\n';
 	rep(i, 1, n) {
-		if (ans[i] == maxe) {
+		if (maxe == ans[i]) {
 			cout << s[i] << '\n';
 		}
 	}
 }
 
 
-
 main() {
 	while (cin >> n) solve();
+//	int t; cin >> t; while (t--) solve();
 	return 0;
 }

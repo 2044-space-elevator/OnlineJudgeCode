@@ -14,73 +14,61 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 
-const int N = 1e6 + 5;
-int fail[N];
-int cnt;
-int tr[N][27];
-pair<int, int> fa[N];
-int exist[N];
-stg s[N], t;
+void solve() {
+	
+}
+
 int n;
+const int N = 1E6 + 5;
+stg s[N], t;
+int tr[N][26], fail[N], cnt, exist[N];
 
 void insert(int ind) {
 	int p = 0;
-	repq(i, 0, s[ind].size()) {
-		int c = s[ind][i] - 'a';
-		if (!tr[p][c]) tr[p][c] = ++cnt;
-		fa[tr[p][c]] = {p, c};
-		p = tr[p][c];
+	for (char vt : s[ind]) {
+		int v = vt - 'a';
+		if (!tr[p][v]) tr[p][v] = ++cnt;
+		p = tr[p][v];
 	}
 	exist[p]++;
 }
 
-void make_fail() {
+void gfail() {
 	queue<int> q;
-	q.push(0);
-	while (q.size()) {
+	repq(i, 0, 26) {
+		if (tr[0][i])
+			q.push(tr[0][i]);
+	}
+	while(q.size()) {
 		int u = q.front(); q.pop();
 		repq(i, 0, 26) {
 			if (tr[u][i]) {
-				q.push(tr[u][i]);
-				if (u == 0) continue;
 				fail[tr[u][i]] = tr[fail[u]][i];
-			} else tr[u][i] = tr[fail[u]][i];
+				q.push(tr[u][i]);
+			} else {
+				tr[u][i] = tr[fail[u]][i];
+			}
 		}
 	}
 }
 
-int ans[N];
-
-
-void solve() {
+main() {
 	cin >> n;
-	cnt = 0;
-	// cin >> n;
 	rep(i, 1, n) {
 		cin >> s[i];
 		insert(i);
-	}	
+	}
+	gfail();
 	cin >> t;
-	// cout << cnt << '\n';e
-	make_fail();
-	int now = 0;
-	int ans = 0;
-	repq(i, 0, t.size()) {
-		now = tr[now][t[i] - 'a'];
-		for (int tt = now; tt && exist[tt] != -1; tt = fail[tt]) {
-			ans += exist[tt];
-			exist[tt] = -1;
+	int p = 0, ans = 0;
+	for (char v : t) {
+		p = tr[p][v - 'a'];
+		for (int t = p; t && exist[t] != -1; t = fail[t]) {
+			ans += exist[t];
+			exist[t] = -1;
 		}
 	}
-	cout << ans << '\n';
-
-}
-
-
-
-main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0); cout.tie(0);
-	solve();
+	cout << ans;
+//	int t; cin >> t; while (t--) solve();
 	return 0;
 }

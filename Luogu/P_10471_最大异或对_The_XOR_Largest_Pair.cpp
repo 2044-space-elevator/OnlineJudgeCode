@@ -19,58 +19,45 @@ void solve() {
 }
 
 const int N = 4E6 + 5;
-int n;
-vct<pair<int, int> > E[N];
-int ende[N], cnt, tr[N][2];
+int arr[N];
+int tr[N][32], cnt;
+bool exist[N];
 
-void insert(int val) {
+void insert(int v) {
 	int p = 0;
 	rrep(i, 0, 30) {
 		int c = 0;
-		if (val & (1ll << i)) {
-			c = 1;	
+		if (v & (1ll << i)) {
+			c = 1;
 		}
 		if (!tr[p][c]) tr[p][c] = ++cnt;
 		p = tr[p][c];
 	}
 }
 
-int find(int val) {
-	int p = 0; int ans = 0;
-	rrep(i, 0, 30) {
-		int c = !(val & (1ll << i));
-		if (tr[p][c]) { ans |= (1 << i); p = tr[p][c]; }
+int find(int v) {
+	int p = 0;
+	int ans = 0;
+	rrep(i, 0 ,30) {
+		int c = !(v & (1ll << i));
+		if (tr[p][c]) { p= tr[p][c]; ans |= (1 << i); }
 		else p = tr[p][!c];
 	}
 	return ans;
 }
 
-void dfs(int u, int fa) {
-	for (auto tmp : E[u]) {
-		int v = tmp.first, w = tmp.second;
-		if (v == fa) continue;
-		ende[v] = w ^ ende[u];
-		dfs(v, u);
-	}
-}
 
 main() {
 	int n;
 	cin >> n;
-	repq(i, 1, n) {
-		int u, v, w;
-		cin >> u >> v>> w;
-		E[u].push_back({v, w});
-		E[v].push_back({u, w});
-	}
-	dfs(1, 0);
 	int ans = 0;
-	// rep(i, 1, n) cout << ende[i] << ' ' ;
-	rep(i, 1, n) insert(ende[i]);
-	rep(i, 1, n) {
-		ans = max(ans, find(ende[i]));
+	while (n--) {
+		int x;
+		cin >> x;
+		insert(x);
+		ans = max(ans, find(x));
 	}
-	cout << ans;
+	cout << ans << '\n';
 //	int t; cin >> t; while (t--) solve();
 	return 0;
 }

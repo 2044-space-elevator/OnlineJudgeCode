@@ -19,32 +19,42 @@ void solve() {
 }
 
 const int N = 1E6 + 5;
-int pi[N];
-stg a, b;
+int tr[N][26], cnt, exist[N];
+
+void insert(stg s) {
+	int p = 0;
+	for (char v : s) {
+		if (!tr[p][v]) tr[p][v] = ++cnt;
+		p = tr[p][v];
+	}
+	exist[p]++;
+}
+
+int find(stg s) {
+	int p = 0;
+	int ans = 0;
+	for (char v : s) {
+		if (!tr[p][v]) tr[p][v] = ++cnt;
+		p = tr[p][v];
+		ans += exist[p];
+	}
+	return ans;
+}
 
 main() {
 //	int t; cin >> t; while (t--) solve();
-	cin >> a >> b;
-	rep(i, 1, b.size() - 1) {
-		int j = pi[i - 1];
-		while (j > 0 && b[i] != b[j]) j = pi[j - 1];
-		if (b[i] == b[j]) j++;
-		pi[i] = j;
+int n, m;
+cin >> n >> m;
+	rep(i, 1, n) {
+		stg a;
+		cin >> a;
+		insert(a);
 	}
-
-	int i = 0, j =0;
-	while (i < a.size()) {
-		if (a[i] == b[j]) {
-			i++, j++;
-			if (j == b.size()) {
-				cout << i - j + 1 << '\n';
-				j = pi[j - 1];
-			}
-		} else {
-			if (j > 0) j = pi[j - 1];
-			else i++;
-		}
+	rep(i, 1, m) {
+		stg fd;
+		cin >> fd;
+		int ans = find(fd);
+		cout << ans << '\n';
 	}
-	rep(i, 0, b.size() - 1) cout << pi[i] << ' ';
 	return 0;
 }
